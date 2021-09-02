@@ -2,10 +2,10 @@
 #include <iostream>
 #include <sstream>
 
-class StopWatchException : public std::exception
+class StopwatchException : public std::exception
 {
 public:
-    StopWatchException(DWORD errorCode)
+    StopwatchException(DWORD errorCode)
         : std::exception(GetErrorCodeString(errorCode).c_str()), m_errorCode(errorCode)
     {}
 
@@ -24,22 +24,26 @@ private:
 
 // See https://docs.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps
 // and https://docs.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter
-class StopWatch
+class Stopwatch
 {
 public:
-    StopWatch()
+    Stopwatch()
         : m_started(false)
     {
         if (!QueryPerformanceFrequency(&m_frequency))
         {
-            throw StopWatchException(GetLastError());
+            throw StopwatchException(GetLastError());
         }
     }
 
     void Start()
     {
         // In this implementation, we allow double-starting
-        QueryPerformanceCounter(&m_startTick); // Skip return value check
+        if (!QueryPerformanceCounter(&m_startTick))
+        {
+            throw StopwatchException(GetLastError());
+        }
+
         m_started = true;
     }
 
@@ -77,7 +81,7 @@ private:
 
 int main()
 {
-    StopWatch sw;
+    Stopwatch sw;
 
     sw.Start();
     for (size_t count = 0; count < 10'000'000; ++count)

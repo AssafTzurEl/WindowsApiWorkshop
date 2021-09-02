@@ -6,7 +6,7 @@ int main()
 	for (size_t counter = 10; counter > 0; --counter)
 	{
 		std::cout << counter << std::endl;
-		Sleep(INFINITE);
+		Sleep(1000);
 	}
 
 	std::cout << "Liftoff!" << std::endl;
